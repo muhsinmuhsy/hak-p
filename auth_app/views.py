@@ -91,7 +91,23 @@ class CustomerVerifyOTP(APIView):
             user = get_object_or_404(User, id=customer_id)
             otp = request.data.get("otp")
 
-            if not user.is_active and user.otp == otp and user.otp_expiry and timezone.now() < user.otp_expiry:
+            if user.is_active and user.otp == otp and user.otp_expiry and timezone.now() < user.otp_expiry:
+                # User is already active, update OTP-related fields and generate token
+                user.otp_expiry = None
+                user.max_otp_try = settings.MAX_OTP_TRY
+                user.otp_max_out = None
+                user.save()
+
+                refresh = RefreshToken.for_user(user)
+                data = {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                    'otp' : 'Successfully verified the customer'
+                }
+                return Response(data, status=status.HTTP_200_OK)
+
+            elif not user.is_active and user.otp == otp and user.otp_expiry and timezone.now() < user.otp_expiry:
+                # OTP verification successful, activate user and generate token
                 user.is_active = True
                 user.otp_expiry = None
                 user.max_otp_try = settings.MAX_OTP_TRY
@@ -106,12 +122,10 @@ class CustomerVerifyOTP(APIView):
                 }
                 return Response(data,  status=status.HTTP_200_OK)
             else:
-                return Response(
-                    "User active or Please enter the correct OTP.",
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                return Response("incorrect OTP.", status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 class CustomerRegenerateOTP(APIView):

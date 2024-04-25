@@ -55,7 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     user_registered_at = models.DateTimeField(auto_now_add=True)
     is_customer = models.BooleanField(default=False)
-    phone_number = models.CharField(max_length=10, unique=True, null=True, blank=True, validators=[phone_regex])
+    phone_number = models.CharField(max_length=10, null=True, blank=True, validators=[phone_regex])
     otp = models.CharField(max_length=6)
     otp_expiry = models.DateTimeField(null=True, blank=True)
     max_otp_try = models.CharField(max_length=2, default=settings.MAX_OTP_TRY)
