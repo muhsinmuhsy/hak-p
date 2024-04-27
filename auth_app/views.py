@@ -16,7 +16,7 @@ from rest_framework.decorators import permission_classes
 
 
 class CustomerListCreate(APIView):
-    def get(self, request):
+    def get(self, request, format=None):
         try:
             # Retrieve customers who are flagged as 'customer'
             users = User.objects.filter(is_customer=True)
@@ -28,7 +28,7 @@ class CustomerListCreate(APIView):
             # Handle specific exceptions if necessary
             return Response({"error": "Failed to retrieve customers"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def post(self, request):
+    def post(self, request, format=None):
         try:
             serializer = CustomerSerializer(data=request.data)
             if serializer.is_valid():
@@ -46,7 +46,7 @@ class CustomerDetail(APIView):
     def get_object(self, customer_id):
         return get_object_or_404(User, id=customer_id)
 
-    def get(self, request, customer_id):
+    def get(self, request, customer_id, format=None):
         try:
             user = self.get_object(customer_id)
             serializer = CustomerSerializer(user)
@@ -54,7 +54,7 @@ class CustomerDetail(APIView):
         except Exception as e:
             return Response(str(e), status=status.HTTP_404_NOT_FOUND)
 
-    def put(self, request, customer_id):
+    def put(self, request, customer_id, format=None):
         try:
             user = self.get_object(customer_id)
             serializer = CustomerSerializer(user, data=request.data)
@@ -65,7 +65,7 @@ class CustomerDetail(APIView):
         except Exception as e:
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def patch(self, request, customer_id):
+    def patch(self, request, customer_id, format=None):
         try:
             user = self.get_object(customer_id)
             serializer = CustomerSerializer(user, data=request.data, partial=True)
@@ -76,7 +76,7 @@ class CustomerDetail(APIView):
         except Exception as e:
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def delete(self, request, customer_id):
+    def delete(self, request, customer_id, format=None):
         try:
             user = self.get_object(customer_id)
             user.delete()
@@ -86,7 +86,7 @@ class CustomerDetail(APIView):
 
 
 class CustomerVerifyOTP(APIView):
-    def patch(self, request, customer_id=None):
+    def patch(self, request, customer_id=None, format=None):
         try:
             user = get_object_or_404(User, id=customer_id)
             otp = request.data.get("otp")
@@ -131,7 +131,7 @@ class CustomerVerifyOTP(APIView):
 
 
 class CustomerRegenerateOTP(APIView):
-    def patch(self, request, customer_id=None):
+    def patch(self, request, customer_id=None, format=None):
         try:
             user = get_object_or_404(User, id=customer_id)
 
