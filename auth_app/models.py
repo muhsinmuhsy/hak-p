@@ -68,6 +68,25 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username or f"User ID: {self.id}"
+    
+    
+
+class UserProfile(models.Model):
+    """
+    User profile model.
+
+    Every user should have only one profile.
+    """
+
+    user = models.OneToOneField(
+        User,
+        related_name="profile",
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+    first_name = models.CharField(max_length=50, null=False, blank=False)
+    last_name = models.CharField(max_length=50, null=False, blank=False)
+    address = models.CharField(max_length=100, null=False, blank=False)
 
 
 # from django.conf import settings

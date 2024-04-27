@@ -4,8 +4,8 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.conf import settings
-from .models import User
-from .serializers import CustomerSerializer
+from .models import User, UserProfile
+from .serializers import CustomerSerializer, UserProfileSerializer
 from .utils import send_otp
 import random
 import datetime
@@ -165,7 +165,25 @@ class CustomerRegenerateOTP(APIView):
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
+class UserProfileGetAdd(APIView):
+    
+        
+    def post(self, request, customer_id=None, format=None):
+        try:
+            user = get_object_or_404(User, id=customer_id, is_customer=True)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_404_NOT_FOUND)
+        
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+        user_profile = UserProfile.objects.create(
+            user=user,
+            first_name=first_name,
+            last_name=last_name
+            )
+        user_profile_serializer = UserProfileSerializer(user_profile)
+        return Response(user_profile_serializer.data, status=status.HTTP_201_CREATED)
+        
 
 @permission_classes([IsAuthenticated])
 class DashboardView(APIView):
