@@ -102,7 +102,8 @@ class CustomerVerifyOTP(APIView):
                 data = {
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
-                    'otp' : 'Successfully verified the customer'
+                    'otp' : 'Successfully verified the customer',
+                    'message' : 'The customer already exists'
                 }
                 return Response(data, status=status.HTTP_200_OK)
 
@@ -118,7 +119,8 @@ class CustomerVerifyOTP(APIView):
                 data = {
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
-                    'otp' : 'Successfully verified the customer'
+                    'otp' : 'Successfully verified the customer',
+                    'message' : 'New customer'
                 }
                 return Response(data,  status=status.HTTP_200_OK)
             else:

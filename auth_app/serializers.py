@@ -22,7 +22,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         """
         phone_number = validated_data["phone_number"]
 
-        if User.objects.filter(phone_number=phone_number).exists():
+        if User.objects.filter(phone_number=phone_number, is_active=True).exists():
             # If phone number already exists, update existing user's OTP
             user = User.objects.get(phone_number=phone_number)
             otp = random.randint(1000, 9999)
