@@ -3,7 +3,7 @@ import random
 from django.conf import settings
 from django.utils import timezone
 from rest_framework import serializers
-from .models import User
+from .models import User, UserProfile
 from .utils import send_otp
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -58,9 +58,8 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User,
+        model = UserProfile
         fields = '__all__'
-        read_only_fields = ("id",)
         
 
 # from datetime import datetime, timedelta

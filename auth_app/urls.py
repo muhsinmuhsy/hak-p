@@ -9,7 +9,8 @@ urlpatterns = [
     path('customer/<int:customer_id>/verify-otp/', CustomerVerifyOTP.as_view(), name='user-verify-otp'),
     path('customer/<int:customer_id>/regenerate-otp/', CustomerRegenerateOTP.as_view(), name='user-regenerate-otp'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('dashboard/', DashboardView.as_view(), name='dashboard')
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('user/customer/profile/add/', UserProfileGetAdd.as_view())
 ]
 
 
