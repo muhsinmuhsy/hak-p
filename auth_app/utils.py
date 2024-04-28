@@ -6,7 +6,7 @@ def send_otp(mobile, otp):
     """
     Send message.
     """
-    # url = f"https://2factor.in/API/V1/{settings.SMS_API_KEY}/SMS/{mobile}/{otp}/Your OTP is"
+    url = f"https://2factor.in/API/V1/{settings.SMS_API_KEY}/SMS/{mobile}/{otp}/Your OTP is"
     
     payload = ""
     headers = {'content-type': 'application/x-www-form-urlencoded'}
