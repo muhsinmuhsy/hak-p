@@ -15,6 +15,31 @@ from rest_framework.decorators import permission_classes
 
 
 
+# class CustomerListCreate(APIView):
+#     def get(self, request, format=None):
+#         try:
+#             # Retrieve customers who are flagged as 'customer'
+#             users = User.objects.filter(is_customer=True)
+#             if not users:
+#                 return Response({"message": "The customer is empty"})
+#             serializer = CustomerSerializer(users, many=True)
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             # Handle specific exceptions if necessary
+#             return Response({"error": "Failed to retrieve customers"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#     def post(self, request, format=None):
+#         try:
+#             serializer = CustomerSerializer(data=request.data)
+#             if serializer.is_valid():
+#                 serializer.save()
+#                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+#             # Provide specific error messages for different validation failures
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         except Exception as e:
+#             # Handle specific exceptions if necessary
+#             return Response({"error": "Failed to create customer"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class CustomerListCreate(APIView):
     def get(self, request, format=None):
         try:
@@ -25,8 +50,7 @@ class CustomerListCreate(APIView):
             serializer = CustomerSerializer(users, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            # Handle specific exceptions if necessary
-            return Response({"error": "Failed to retrieve customers"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": f"Failed to retrieve customers: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request, format=None):
         try:
@@ -37,9 +61,7 @@ class CustomerListCreate(APIView):
             # Provide specific error messages for different validation failures
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            # Handle specific exceptions if necessary
-            return Response({"error": "Failed to create customer"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            return Response({"error": f"Failed to create customer: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class CustomerDetail(APIView):
