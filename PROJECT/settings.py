@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SMS_API_KEY = env("SMS_API_KEY")
 
 # SMS_API_KEY = '8ac15574-fbe6-11ee-8cbb-0200cd936042'
-SMS_API_KEY = '54a221c9-0d1f-11ef-8cbb-0200cd936042'
+SMS_API_KEY = '77b6f985-111f-11ef-b6d7-0200cd936042'
 
 MAX_OTP_TRY = 3
 

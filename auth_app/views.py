@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.conf import settings
 from .models import User, UserProfile
-from .serializers import CustomerSerializer, UserProfileSerializer
+from .serializers import CustomerSerializer, UserProfileSerializer, AdminSerializer
 from .utils import send_otp
 import random
 import datetime
@@ -207,18 +207,11 @@ class CustomerRegenerateOTP(APIView):
 
 @permission_classes([IsAuthenticated])
 class UserProfileGetAdd(APIView):
-      
     def post(self, request, format=None):
-        
-        
         first_name = request.data.get('first_name')
         last_name = request.data.get('last_name')
-
         user = request.user
-        
-        
         try:
-
             user_profile = UserProfile.objects.create(
                 user=user,
                 first_name=first_name,
@@ -230,24 +223,44 @@ class UserProfileGetAdd(APIView):
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
         
 
-@permission_classes([IsAuthenticated])
-class DashboardView(APIView):
-    def get(self, request):
-        try:
-            response = f"Hey {request.user}, You are seeing a Get response"
-            return Response({'response': response}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# @permission_classes([IsAuthenticated])
+# class DashboardView(APIView):
+#     def get(self, request):
+#         try:
+#             response = f"Hey {request.user}, You are seeing a Get response"
+#             return Response({'response': response}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def post(self, request):
+#     def post(self, request):
+#         try:
+#             text = request.data.get("text")
+#             if text is None:
+#                 return Response({'error': 'Text is required'}, status=status.HTTP_400_BAD_REQUEST)
+#             response = f"Hey {request.user}, Your text is {text}"
+#             return Response({'response': response}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+## ---------------------------------------------------------------------------------------------------------##
+
+class ProdctAdminListCreate(APIView):
+    def get(self, request, format=None):
         try:
-            text = request.data.get("text")
-            if text is None:
-                return Response({'error': 'Text is required'}, status=status.HTTP_400_BAD_REQUEST)
-            response = f"Hey {request.user}, Your text is {text}"
-            return Response({'response': response}, status=status.HTTP_200_OK)
+            users = User.objects.filter(is_product_admin=True)
+            if not users:
+                return Response({"message":"The customer is empty"})
+            serializer = AdminSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": f"Failed to retrieve customers: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # def post(self, request, format=None):
+    #     try:
+    #         serializer = AdminSerializer(data=request.data)
+    #         if serializer.is_valid():
+    #             serializer.save(is_product_admin=True)
 
 
 # from rest_framework.views import APIView

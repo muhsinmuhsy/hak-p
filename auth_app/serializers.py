@@ -61,6 +61,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = '__all__'
         
+        
+class AdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "username", "password")
+        read_only_fields = ("id",)
+        
 
 # from datetime import datetime, timedelta
 # import random
