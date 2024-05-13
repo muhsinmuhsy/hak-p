@@ -148,7 +148,7 @@ class CustomerVerifyOTP(APIView):
             else:
                 return Response("incorrect OTP.", status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(f"Something went wrong: {str(e)}", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
