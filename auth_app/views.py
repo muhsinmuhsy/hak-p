@@ -12,6 +12,7 @@ import datetime
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
+from django.contrib.auth import authenticate, login
 
 
 
@@ -245,22 +246,107 @@ class UserProfileGetAdd(APIView):
 
 ## ---------------------------------------------------------------------------------------------------------##
 
-class ProdctAdminListCreate(APIView):
+
+
+class ProductAdminListCreate(APIView):
     def get(self, request, format=None):
         try:
             users = User.objects.filter(is_product_admin=True)
             if not users:
-                return Response({"message":"The customer is empty"})
+                return Response({"message": "No product admins found."}, status=status.HTTP_204_NO_CONTENT)
             serializer = AdminSerializer(users, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({"error": f"Failed to retrieve customers: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": f"Failed to retrieve product admins: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    # def post(self, request, format=None):
-    #     try:
-    #         serializer = AdminSerializer(data=request.data)
-    #         if serializer.is_valid():
-    #             serializer.save(is_product_admin=True)
+    def post(self, request, format=None):
+        try:
+            serializer = AdminSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(is_product_admin=True)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": f"Failed to create product admin: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+
+# {
+#     "username": "exameOOple_user",
+#     "password": "password",
+#     "email": "admin@example.com",
+#     "phone_number": "1234567890",
+#     "first_name": "John",
+#     "last_name": "Doe"
+# }
+
+
+class OrderAdminListCreate(APIView):
+    def get(self, request, format=None):
+        try:
+            users = User.objects.filter(is_order_admin=True)
+            if not users:
+                return Response({"message": "No Order admins found."}, status=status.HTTP_204_NO_CONTENT)
+            serializer = AdminSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": f"Failed to retrieve Order admins: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request, format=None):
+        try:
+            serializer = AdminSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(is_order_admin=True)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": f"Failed to create product admin: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+        
+
+class SalesAdminListCreate(APIView):
+    def get(self, request, format=None):
+        try:
+            users = User.objects.filter(is_sales_admin=True)
+            if not users:
+                return Response({"message": "No Sales admins found."}, status=status.HTTP_204_NO_CONTENT)
+            serializer = AdminSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": f"Failed to retrieve Sales admins: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request, format=None):
+        try:
+            serializer = AdminSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(is_sales_admin=True)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": f"Failed to create sales admin: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class LoginView(APIView):
+    def post(self, request, format=None):
+        try:
+            username = request.data.get('username')
+            password = request.data.get('password')
+
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                refresh = RefreshToken.for_user(user)
+                response_data = {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                    'message' : 'Login successful'
+                }
+                return Response(response_data, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({"message": "An error occurred during login", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # from rest_framework.views import APIView

@@ -61,12 +61,43 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = '__all__'
         
+
+# class ProductAdminSerializer(serializers.ModelSerializer):
+#     is_product_admin = serializers.BooleanField(default=True)
+
+#     class Meta:
+#         model = User
+#         fields = ("id", "username", "is_product_admin")
+#         read_only_fields = ("id",)
+
+#     def create(self, validated_data):
+#         validated_data["is_product_admin"] = True
+#         return super().create(validated_data)
+
         
+        
+# class AdminSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ("id", "username", "password", "is_product_admin")
+#         # fields = '__all__'
+#         read_only_fields = ("id",)
+    
+    
 class AdminSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(source='profile.first_name')
+    last_name = serializers.CharField(source='profile.last_name')
+
     class Meta:
         model = User
-        fields = ("id", "username", "password")
-        read_only_fields = ("id",)
+        fields = ("id", "username", "password", "is_product_admin", "is_order_admin", "is_sales_admin", "email", "phone_number", "first_name", "last_name")
+
+    def create(self, validated_data):
+        profile_data = validated_data.pop('profile')
+        user = User.objects.create(**validated_data)
+        UserProfile.objects.create(user=user, **profile_data)
+        return user
+    
         
 
 # from datetime import datetime, timedelta

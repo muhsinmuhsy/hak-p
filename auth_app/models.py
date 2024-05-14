@@ -62,7 +62,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     otp_max_out = models.DateTimeField(null=True, blank=True)
     
     is_product_admin = models.BooleanField(default=False)
-
+    is_order_admin = models.BooleanField(default=False)
+    is_sales_admin = models.BooleanField(default=False)
+    
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
 
