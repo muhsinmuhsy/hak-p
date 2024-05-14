@@ -327,7 +327,7 @@ class SalesAdminListCreate(APIView):
             return Response({"error": f"Failed to create sales admin: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class LoginView(APIView):
+class AdminLoginView(APIView):
     def post(self, request, format=None):
         try:
             username = request.data.get('username')

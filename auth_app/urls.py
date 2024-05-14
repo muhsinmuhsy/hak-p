@@ -12,7 +12,9 @@ urlpatterns = [
     # path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('user/customer/profile/add/', UserProfileGetAdd.as_view()),
     
-    path('product-admins/', ProductAdminListCreate.as_view(), name='product_admin_list_create')
+    path('product-admins/', ProductAdminListCreate.as_view(), name='product_admin_list_create'),
+    
+    path('admin-login/', AdminLoginView.as_view(), name='admin-login'),
 ]
 
 
