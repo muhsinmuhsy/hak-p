@@ -98,6 +98,8 @@ class AdminSerializer(serializers.ModelSerializer):
         UserProfile.objects.create(user=user, **profile_data)
         return user
     
+    
+    
         
 
 # from datetime import datetime, timedelta
