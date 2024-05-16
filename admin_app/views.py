@@ -84,57 +84,56 @@ class CategoryListCeateView(APIView):
 
 
 
-class ProductListCreateAPIView(APIView):
+class ProductListAPIView(APIView):
     def get(self, request, format=None):
         products = Product.objects.all()
-        products_data = []
+        products_and_variants_data = []
 
         for product in products:
-            product_data = ProductSerializer(product).data
-            variants_data = ProductVariantSerializer(product.productvariant_set.all(), many=True).data
-            product_data['variants'] = variants_data
-            products_data.append(product_data)
-
-        return Response(products_data)
-    
-    def post(self, request, format=None):
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            product = serializer.save()
+            product_serializer = ProductSerializer(product)
+            variants = ProductVariant.objects.filter(product=product)
+            variants_serializer = ProductVariantListSerializer(variants, many=True)
+            product_data = product_serializer.data
+            product_data['variants'] = variants_serializer.data
+            products_and_variants_data.append(product_data)
             
-            variants_data = request.data.get('variants', [])
-            for variant_data in variants_data:
-                variant_data['product'] = product.id
-                variant_serializer = ProductVariantSerializer(data=variant_data)
-                if variant_serializer.is_valid():
-                    variant_serializer.save()
-                else:
-                    product.delete()
-                    return Response(variant_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        response_data = {
+            'products' : products_and_variants_data
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProductAddAPIView(APIView):
+    def post(self, request, format=None):
+        pass
     
-# {
-#     "name": "Product1",
-#     "description": "werfds",
-#     "category": 1,
-#     "variants": [
-#         {
-#             "size": {"name": "Medium"},  // Adjusted to a dictionary
-#             "color": {"name": "Red"},    // Adjusted to a dictionary
-#             "actual_price": "0.07",
-#             "discount_price": "12.00",
-#             "stock": 4,
-#             "product": 2
-#         },
-#         {
-#             "size": {"name": "Large"},   // Adjusted to a dictionary
-#             "color": {"name": "Red"},    // Adjusted to a dictionary
-#             "actual_price": "11.00",
-#             "discount_price": "11.00",
-#             "stock": 0,
-#             "product": 2
-#         }
-#     ]
-# }
+    
+        
+    
+    
+    
+{
+    "name": "Product1",
+    "description": "werfds",
+    "category": 1,
+    "variants": [
+        {
+            "size": {"name": "Medium"},  
+            "color": {"name": "Red"},    
+            "actual_price": "0.07",
+            "discount_price": "12.00",
+            "stock": 4,
+            "product": 2
+        },
+        {
+            "size": {"name": "Large"},   
+            "color": {"name": "Red"},    
+            "actual_price": "11.00",
+            "discount_price": "11.00",
+            "stock": 0,
+            "product": 2
+        }
+    ]
+}

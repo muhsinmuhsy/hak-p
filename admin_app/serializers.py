@@ -47,20 +47,30 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 
-class ProductVariantSerializer(serializers.ModelSerializer):
+class ProductVariantListSerializer(serializers.ModelSerializer):
     size = SizeSerializer()
     color = ColorSerializer()
 
     class Meta:
         model = ProductVariant
         fields = '__all__'
+        
+        
+        
+class ProductVariantAddSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductVariant
+        fields = '__all__'
+        
+        
 
-    def create(self, validated_data):
-        size_data = validated_data.pop('size')
-        color_data = validated_data.pop('color')
 
-        size, _ = Size.objects.get_or_create(**size_data)
-        color, _ = Color.objects.get_or_create(**color_data)
+    # def create(self, validated_data):
+    #     size_data = validated_data.pop('size')
+    #     color_data = validated_data.pop('color')
 
-        variant = ProductVariant.objects.create(size=size, color=color, **validated_data)
-        return variant
+    #     size, _ = Size.objects.get_or_create(**size_data)
+    #     color, _ = Color.objects.get_or_create(**color_data)
+
+    #     variant = ProductVariant.objects.create(size=size, color=color, **validated_data)
+    #     return variant
