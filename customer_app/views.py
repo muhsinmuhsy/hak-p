@@ -24,9 +24,57 @@ class CategoryListView(APIView):
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
         
+class CategoryWithProducts(APIView):
+    def get(self, request, format=None, category_id=None):        
+        category = Category.objects.get(id=category_id)
+        final_data = []
+        category_serializer = CategorySerializer(category, context={'request': request})
+        product = Product.objects.filter(category=category)
+        product_serializer = ProductSerializer(product, many=True)
+        
+        category_data = category_serializer.data
+        first_data = category_data['products'] = product_serializer.data
+        
+        variants = ProductVariant.objects.filter(product=product)
+        variants_serializer = ProductVariant(variants, many=True)
+        
+        first_data['variants'] = variants_serializer.data
+        
+        final_data.append(first_data)
+        
+        response_data = {
+            'category' : final_data
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
+    
+    
+# class CategoryWithProducts(APIView):
+#     def get(self, request, category_id=None, format=None):        
+#         try:
+#             category = Category.objects.get(id=category_id)
+#         except Category.DoesNotExist:
+#             return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
+
+#         products = Product.objects.filter(category=category)  # Assuming there's a ForeignKey from Product to Category
+#         category_serializer = CategorySerializer(category)
+#         product_serializer = ProductSerializer(products, many=True)
+        
+#         category_data = category_serializer.data
+#         category_data['products'] = product_serializer.data
+        
+#         response_data = {
+#             'category': category_data
+#         }
+        
+#         return Response(response_data, status=status.HTTP_200_OK)
+        
+            
         
         
-class ProductWithVariantsList(APIView):
+        
+@permission_classes([IsAuthenticated]) 
+class ProductWithVariants(APIView):
     def get(self, request, format=None):
         products = Product.objects.all()
         products_data = []
@@ -43,7 +91,9 @@ class ProductWithVariantsList(APIView):
         }
         
         return Response(response_data, status=status.HTTP_200_OK)
-    
+
+
+
     
 
                 
