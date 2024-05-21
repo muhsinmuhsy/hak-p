@@ -14,6 +14,9 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
         
+       
+
+        
         
 # class ProductSerializer(serializers.ModelSerializer):
 #     image = serializers.SerializerMethodField()
@@ -37,10 +40,26 @@ class SizeSerializer(serializers.ModelSerializer):
         model = Size
         fields = '__all__'
 
+# class ColorSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Color
+#         fields = '__all__'
+
+
+ 
+
+class ColorImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ColorImage
+        fields = ('id', 'image', 'name')
+
+
 class ColorSerializer(serializers.ModelSerializer):
+    images = ColorImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = Color
-        fields = '__all__'
+        fields = ('id', 'product', 'name', 'images')
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:

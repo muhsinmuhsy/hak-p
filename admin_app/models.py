@@ -11,10 +11,10 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to='products', blank=True, null=True)
+   
 
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.name
 
 
 class Size(models.Model):
@@ -24,12 +24,20 @@ class Size(models.Model):
         return self.name
 
 
-class Color(models.Model):
-    name = models.CharField(max_length=50)
+class ColorImage(models.Model):
     image = models.ImageField(upload_to='color', null=True, blank=True)
+    name = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f"ColorImage {self.id}"
+
+
+class Color(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
+    name = models.CharField(max_length=50)
+    images = models.ManyToManyField(ColorImage, related_name='colors')
+
+    
 
 
 class ProductVariant(models.Model):
